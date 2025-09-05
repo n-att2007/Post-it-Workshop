@@ -3,8 +3,10 @@ const addButton = document.getElementById('add-note-button');
 const notesContainer = document.getElementById('notes-container');
 const toggleThemeButton = document.getElementById('toggle-theme-button');
 const body = document.body;
-const colors = ['note-yellow'];
+// Paleta de colores para las notas (clses CSS)
+const colors = ['note-yellow', 'note-pink', 'note-blue', 'note-green', 'note-orange'];
 
+// Crear elemento de nota con texto y clase de color
 function createNoteElement(text, colorClass) {
     const noteDiv = document.createElement('div');
     noteDiv.classList.add('note', colorClass); 
@@ -18,23 +20,43 @@ function createNoteElement(text, colorClass) {
     return noteDiv;
 }
 
+// Guardar notas en localStorage
+function saveNotes() {
+    const notes = [];
+    // Recorremos todas las notas en el contenedor
+    notesContainer.querySelectorAll('.note').forEach(noteDiv => {
+        // Extraemos el texto sin la 'x' de eliminar
+        const text = noteDiv.childNodes[0].nodeValue.trim();
+        // Buscamos la clase de color (excluyendo 'note' y 'editing')
+        const colorClass = Array.from(noteDiv.classList).find(c => c !== 'note' && c !== 'editing' && c !== 'editing');
+        notes.push({ text, color: colorClass });
+    });
+    localStorage.setItem('notes', JSON.stringify(notes));
+}
+
+// Cargar notas desde localStorage y renderizarlas
 function loadNotes() {
-    const storedNotes = [];
-    console.log(storedNotes);
+    const storedNotes = localStorage.getItem('notes');
     if (storedNotes) {
-        const notes = JSON.parse(storedNotes);
-        notes.forEach(noteData => {
-            const newNote = createNoteElement(noteData.text, noteData.color);
-            notesContainer.appendChild(newNote);
-        });
+        try {
+            const notes = JSON.parse(storedNotes);
+            notes.forEach(noteData => {
+                const newNote = createNoteElement(noteData.text, noteData.color);
+                notesContainer.appendChild(newNote);
+            });
+        } catch (e) {
+            console.error('Error al parsear notas desde localStorage', e);
+        }
     }
 }
 
+// Establecer tema inicial según localStorage
 function setInitialTheme() {
     const isDarkMode = localStorage.getItem('isDarkMode') === 'true';
     if (isDarkMode) {
         body.classList.add('dark-mode');
         toggleThemeButton.textContent = 'Modo Claro';
+    } else {
     }
 }
 
