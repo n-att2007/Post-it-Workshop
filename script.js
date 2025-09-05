@@ -57,6 +57,7 @@ function setInitialTheme() {
         body.classList.add('dark-mode');
         toggleThemeButton.textContent = 'Modo Claro';
     } else {
+        toggleThemeButton.textContent = 'Modo Oscuro';
     }
 }
 
